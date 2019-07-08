@@ -170,12 +170,10 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="Controllers\documentosController.cs" />
-    <Compile Include="Controllers\etiquetasController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\clientesController.cs" />
+    <Compile Include="Controllers\tiposDeProductoController.cs" />
     <Compile Include="Controllers\tiposdeusuarioController.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DatabaseChecado.cs" />
     <Compile Include="DataBaseEspecificaciones.cs" />

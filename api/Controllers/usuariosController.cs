@@ -33,26 +33,26 @@ namespace api.Controllers
                 return "Incorrecto";
 
 
-            string query = string.Format("select " +
-            "a.id   " +
+            string query = string.Format("select a.id " +
+            ", concat(a.nombres, ' ', a.apellido_paterno, ' ' , a.apellido_materno) as usuario " +
             ", a.nombre_de_usuario " +
-            ", a.APATERNO " +
-            ", a.AMATERNO " +
-            ", a.NOMBRE " +
-            ", a.email " + //Conservar 
+            ", a.apellido_paterno " +
+            ", a.apellido_materno " +
+            ", a.nombres " +
+            ", a.secret " +
+            ", a.email " +
             ", a.foto_url " +
-            ", concat(a.NOMBRE, ' ' , a.APATERNO,  ' ' ,a.AMATERNO) as usuario   " + //Conservar
-            ", b.nombre as tipo_de_usuario " +  //Convervar 
+            ", a.id_tipo_de_usuario " +
+            ", b.nombre as tipo_de_usuario " +
             "from lu_usuarios a " +
-            "left join cf_tipos_de_usuario b on b.id = a.id_tipo_de_usuario " +
+            "LEFT JOIN cf_tipos_de_usuario b on a.id_tipo_de_usuario=b.id  " +
             "where a.estado=1   " +
             "" + //Otras condiciones para el Where
             "group by a.id   " +
             "HAVING usuario like '%{2}%'   " +
-            "OR a.email like '%{2}%'   " +
-            "OR b.nombre like '%{2}%'   " +
+            "OR a.email like '%{2}%'   " +            
             "OR tipo_de_usuario like '%{2}%' " +
-            "order by a.FECHA_MODIFICACION desc limit {0} offset {1};  "
+            "order by a.fecha_de_modificacion desc limit {0} offset {1};  "
                 , utilidades.elementos_por_pagina
                 , ((pagina - 1) * (utilidades.elementos_por_pagina - 1))
                 , nombre);
@@ -71,17 +71,21 @@ namespace api.Controllers
             //Actualizamos los datos con un update query. 
             string update_query = string.Format("UPDATE `lu_usuarios` " +
              "set " +
-             "nombre_de_usuario='{0}' " +
-             ",secret='{1}' " +
-             ",email='{2}' " +
-             ",id_tipo_de_usuario='{3}' " +
-                // ",foto_url='{4}' " +
-             "where id='{4}'"
+            "nombre_de_usuario = '{0}' " +
+            ", apellido_paterno = '{1}' " +
+            ", apellido_materno = '{2}' " +
+            ", nombres = '{3}' " +
+            ", secret = '{4}' " +
+            ", email = '{5}' " +
+            ", id_tipo_de_usuario = '{6}' " +
+            "where id='{7}' "
              , json["nombre_de_usuario"].ToString().Replace("'", "''")
-             , json["secret"].ToString().Replace("'", "''")
-             , json["email"].ToString().Replace("'", "''")
-             , json["id_tipo_de_usuario"].ToString().Replace("'", "''")
-                // , json["foto_url"].ToString().Replace("'", "''")
+            , json["apellido_paterno"].ToString().Replace("'", "''")
+            , json["apellido_materno"].ToString().Replace("'", "''")
+            , json["nombres"].ToString().Replace("'", "''")
+            , json["secret"].ToString().Replace("'", "''")
+            , json["email"].ToString().Replace("'", "''")
+            , json["id_tipo_de_usuario"].ToString().Replace("'", "''")                
              , id);
 
             //Contestamos con el id del nuevo registro.
@@ -91,7 +95,21 @@ namespace api.Controllers
                 return "incorrecto";
         }
 
+        public string PostDelete(int id)
+        {
+            //Actualizamos los datos con un update query. 
+            string update_query = string.Format("UPDATE `lu_usuarios` " +
+             "set " +
+            "estado = '0' " +            
+            "where id='{0}'; "             
+             , id);
 
+            //Contestamos con el id del nuevo registro.
+            if (Database.runQuery(update_query))
+                return "correcto";
+            else
+                return "incorrecto";
+        }
 
         public string Post([FromBody]Object value)
         {
@@ -109,18 +127,18 @@ namespace api.Controllers
                 //Actualizamos los datos con un update query. 
                 string insert_query = string.Format("INSERT INTO `lu_usuarios` " +
                 "(`nombre_de_usuario`," +
-                    "`APATERNO`," +
-                    "`AMATERNO`," +
-                    "`NOMBRE`," +
+                    "`apellido_paterno`," +
+                    "`apellido_materno`," +
+                    "`nombres`," +
                     "`secret`," +
                     "`email`," +
                     "`id_tipo_de_usuario`) " +
                 "VALUES " +
                 "('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');"
                     , json["nombre_de_usuario"].ToString().Replace("'", "''")
-                    , json["APATERNO"].ToString().Replace("'", "''")
-                    , json["AMATERNO"].ToString().Replace("'", "''")
-                    , json["NOMBRE"].ToString().Replace("'", "''")
+                    , json["apellido_paterno"].ToString().Replace("'", "''")
+                    , json["apellido_materno"].ToString().Replace("'", "''")
+                    , json["nombres"].ToString().Replace("'", "''")
                     , json["secret"].ToString().Replace("'", "''")
                     , json["email"].ToString().Replace("'", "''")
                     , json["id_tipo_de_usuario"].ToString().Replace("'", "''"));
@@ -140,6 +158,7 @@ namespace api.Controllers
 
         }
 
+
         public string Get(int id)
         {
             //Encabezados
@@ -155,26 +174,18 @@ namespace api.Controllers
 
             //Utilizaré la variable estatica (global) de la clase de utilidades y el número de la página que me solicitan. 
             string query = string.Format("select " +
-            "nombre_de_usuario, " +
-            "APATERNO, " +
-            "AMATERNO, " +
-            "NOMBRE, " +
-            "secret, " +
-            "email, " +
-            "id_tipo_de_usuario, " +
-            "foto_url, " +
-            "FECHA_REGISTRO, " +
-            "FECHA_MODIFICACION, " +
-            "CLAVE_EMPLEADO, " +
-            "NSS, " +
-            "RFC, " +
-            "CURP, " +
-            "AREA, " +
-            "DEPARTAMENTO, " +
-            "BORRADO, " +
-            "FECHA_INGRESO, " +
-            "FECHA_BAJA " +
+            "a.id " +
+            ", a.nombre_de_usuario " +
+            ", a.apellido_paterno " +
+            ", a.apellido_materno " +
+            ", a.nombres " +
+            ", a.secret " +
+            ", a.email " +
+            ", a.foto_url " +
+            ", a.id_tipo_de_usuario " + 
+            ", b.nombre as tipo_de_usuario " + 
             "from lu_usuarios a " +
+            "LEFT JOIN cf_tipos_de_usuario b on b.id=a.id_tipo_de_usuario " +
             "where a.id='{0}' and a.estado='1' "
                 , id);
 
@@ -201,13 +212,14 @@ namespace api.Controllers
                                         ", a.id as id_usuario " +
                                         ", a.id_tipo_de_usuario as id_tipo_de_usuario" +
                                         ", '' as token " +
-                                        ", concat(a.NOMBRE) as nombres_de_usuario " +
-                                        ", b.nombre as tipo_de_usuario " +                                                                                                                        
+                                        ", concat(a.nombres) as nombres_de_usuario " +
+                                        ", b.nombre as tipo_de_usuario " +       
+                                        ", a.foto_url as foto_url " + 
                                         "from lu_usuarios a " +
-                                        "LEFT JOIN cf_tipos_de_usuario b on b.id=a.id_tipo_de_usuario " +                                        
+                                        "LEFT JOIN cf_tipos_de_usuario b on b.id=a.id_tipo_de_usuario " +
                                         "where  " +
-                                        "nombre_de_usuario='{0}'  " +
-                                        "and binary secret='{1}'; " //Solo traermos a los usuarios activos. 
+                                        "a.nombre_de_usuario='{0}'  " +
+                                        "and binary a.secret='{1}'; " //Solo traermos a los usuarios activos. 
                                          , nombre_de_usuario
                                          , secret);
 
@@ -224,6 +236,40 @@ namespace api.Controllers
             tabla_resultado.Rows[0]["token"] = token;
 
             return utilidades.convertDataTableToJson(tabla_resultado);
+        }
+
+        public string uploadImage(int id, [FromBody]Object value)
+        {
+            try
+            {
+                //Tomar en cuenta que las fechas vienen en el formato YYYY-MM-dd
+                JObject json = JObject.Parse(value.ToString());
+                
+                string filename = string.Format("{0}.jpg", id);
+                utilidades.guardar_imagen(json["foto_url"].ToString().Replace("'", "''").ToString(), "usuarios", filename);
+
+                string foto_url = "http://" + Request.Headers.Host + "/temp/usuarios/" + filename;
+
+                foto_url += "?fecha=" + DateTime.Now.ToString("ddMMyyyy_HHmmss");
+
+                //Actualizamos el campo de foto_url de la mascota.             
+                string update_query = string.Format("UPDATE `lu_usuarios` " +
+               "set " +
+               "foto_url='{0}' " +
+               "where id='{1}'"
+               , foto_url
+               , id);
+
+                //Contestamos con el id del nuevo registro.
+                if (Database.runQuery(update_query))
+                    return "correcto";
+                else
+                    return "incorrecto";
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
         }
 
         public string getMigrarUsuarios()
