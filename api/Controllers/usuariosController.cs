@@ -169,8 +169,8 @@ namespace api.Controllers
             string id_tipo_de_usuario = headerValues_id_tipo_de_usuario.FirstOrDefault().ToString();
 
             //En caso de ser criador un usuario no Administrador, no le regresamos nada.
-            if ((id_tipo_de_usuario != "1"))
-                return "Incorrecto";
+            //if ((id_tipo_de_usuario != "1"))
+                //return "Incorrecto";
 
             //Utilizaré la variable estatica (global) de la clase de utilidades y el número de la página que me solicitan. 
             string query = string.Format("select " +
@@ -219,7 +219,7 @@ namespace api.Controllers
                                         "LEFT JOIN cf_tipos_de_usuario b on b.id=a.id_tipo_de_usuario " +
                                         "where  " +
                                         "a.nombre_de_usuario='{0}'  " +
-                                        "and binary a.secret='{1}'; " //Solo traermos a los usuarios activos. 
+                                        "and binary a.secret='{1}' and a.estado=1; " //Solo traermos a los usuarios activos. 
                                          , nombre_de_usuario
                                          , secret);
 

@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PublishDatabases>false</PublishDatabases>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,14 +40,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="IronPdf, Version=4.4.9.15720, Culture=neutral, PublicKeyToken=94e1c31412563c75, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\IronPdf.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net40\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net40\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -170,13 +188,24 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\bancosController.cs" />
+    <Compile Include="Controllers\clasificacionesDeProductoController.cs" />
     <Compile Include="Controllers\clientesController.cs" />
-    <Compile Include="Controllers\tiposDeProductoController.cs" />
+    <Compile Include="Controllers\descargasController.cs" />
+    <Compile Include="Controllers\estadosController.cs" />
+    <Compile Include="Controllers\estadosDeFacturaController.cs" />
+    <Compile Include="Controllers\facturasController.cs" />
+    <Compile Include="Controllers\facturasProductosController.cs" />
+    <Compile Include="Controllers\pagosController.cs" />
+    <Compile Include="Controllers\paisesController.cs" />
+    <Compile Include="Controllers\productosController.cs" />
     <Compile Include="Controllers\tiposdeusuarioController.cs" />
+    <Compile Include="Controllers\unidadesController.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DatabaseChecado.cs" />
     <Compile Include="DataBaseEspecificaciones.cs" />
+    <Compile Include="Descarga.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -252,6 +281,10 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <None Include="Properties\PublishProfiles\moneplackcontable.xik.mx - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\moneplackcontable.xik.mx - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\moneplackcontable2.xik.mx - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\moneplackcontable2.xik.mx - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\PMM Regulatorios.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />

@@ -13,7 +13,7 @@ namespace api.Controllers
     class Database
     {
         public static string tipoUsuario = "";
-        //public static MySqlConnection _conn = new MySqlConnection("server=xiksolutions.com;database=db_royal_canin;uid=kevin;pwd=conker1385;CHARSET=utf8;convert zero datetime=True");
+        //public static MySqlConnection _conn = new MySqlConnection("server=xiksolutions.com;database=db_contabilidad_moneplack;uid=kevin;pwd=conker1385;CHARSET=utf8;convert zero datetime=True");
         //public static MySqlConnection _conn = new MySqlConnection("server=mysql5012.site4now.net;database=db_a47aae_royal;uid=a47aae_royal;pwd=conker1385;CHARSET=utf8;convert zero datetime=True");
         //public static MySqlConnection _conn = new MySqlConnection("server=xik.mx;port=3306;database=db_royal_canin;uid=kevin;pwd=conker1385;CHARSET=utf8;convert zero datetime=True");
         public static MySqlConnection _conn = new MySqlConnection("server=localhost;database=db_contabilidad_moneplack;uid=root;pwd=conker;CHARSET=utf8;convert zero datetime=True");

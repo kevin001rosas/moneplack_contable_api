@@ -11,13 +11,13 @@ using System.Web.Http;
 
 namespace api.Controllers
 {
-    public class clientesController : ApiController
+    public class productosController : ApiController
     {
         public string getForCombobox()
         {
             /*if (!utilidades.validar_token(Request))
                 return Json("incorrecto");*/
-            string query = "SELECT id, razon_social as nombre from lu_clientes where estado=1 order by razon_social;";
+            string query = "SELECT id, nombre from lu_productos where estado=1 order by nombre;";
             DataTable tabla = Database.runSelectQuery(query);
             return utilidades.convertDataTableToJson(tabla);
         }
@@ -43,17 +43,22 @@ namespace api.Controllers
 
 
             string query = string.Format("select a.id " +
-            ", a.razon_social " +
-            ", a.rfc  " +
-            ", concat(COALESCE(a.calle,''), ' ', COALESCE(a.numero_exterior,''), ', Municipio. ' , COALESCE(a.municipio,''), ', Localidad. ', COALESCE(a.localidad,''), ', Col. ', COALESCE(a.colonia,''), ', C.P. ', COALESCE(a.codigo_postal,'')) as direccion  " +
+            ", a.nombre " +
+            ", a.clave_de_producto " +
+            ", a.numero_de_identificacion " +
             ", a.foto_url " +
-            "from lu_clientes a " +            
+            ", b.nombre as unidad " +
+            ", concat('$', a.valor_unitario) as valor_unitario  " +
+            "from lu_productos a " +
+            "LEFT JOIN lu_unidades b on a.id_unidad=b.id " +
             "where a.estado=1   " +
             "" + //Otras condiciones para el Where
             "group by a.id   " +
-            "HAVING a.rfc like '%{2}%'   " +            
-            "OR razon_social like '%{2}%' " +
-            "OR direccion like '%{2}%' " +
+            "HAVING " +
+            "unidad like '%{2}%' " +
+            "OR a.nombre like '%{2}%' " +
+            "OR a.clave_de_producto like '%{2}%' " +
+            "OR a.numero_de_identificacion like '%{2}%' " +
             "order by a.fecha_de_modificacion desc limit {0} offset {1};  "
                 , utilidades.elementos_por_pagina
                 , ((pagina - 1) * (utilidades.elementos_por_pagina - 1))
@@ -71,29 +76,19 @@ namespace api.Controllers
             JObject json = JObject.Parse(value.ToString());
 
             //Actualizamos los datos con un update query. 
-            string update_query = string.Format("UPDATE `lu_clientes` " +
+            string update_query = string.Format("UPDATE `lu_productos` " +
              "set " +
-            "razon_social = '{0}' " +
-            ", RFC = '{1}' " +
-            ", id_pais = '{2}' " +
-            ", codigo_postal = '{3}' " +
-            ", id_estado = '{4}' " +
-            ", municipio = '{5}' " +
-            ", localidad = '{6}' " +
-            ", colonia = '{7}' " +
-            ", calle = '{8}' " +
-            ", numero_exterior = '{9}' " +
-            "where id='{10}' "
-            , json["razon_social"].ToString().Replace("'", "''")
-            , json["RFC"].ToString().Replace("'", "''")
-            , json["id_pais"].ToString().Replace("'", "''")
-            , json["codigo_postal"].ToString().Replace("'", "''")
-            , json["id_estado"].ToString().Replace("'", "''")
-            , json["municipio"].ToString().Replace("'", "''")
-            , json["localidad"].ToString().Replace("'", "''")
-            , json["colonia"].ToString().Replace("'", "''")
-            , json["calle"].ToString().Replace("'", "''")
-            , json["numero_exterior"].ToString().Replace("'", "''")
+            "nombre = '{0}' " +                      
+            ", numero_de_identificacion='{1}' " +
+            ", clave_de_producto='{2}' " +
+            ", id_unidad = '{3}' " +
+            ", valor_unitario = '{4}' " +     
+            "where id='{5}' "
+            , json["nombre"].ToString().Replace("'", "''")
+            , json["numero_de_identificacion"].ToString().Replace("'", "''")
+            , json["clave_de_producto"].ToString().Replace("'", "''")            
+            , json["id_unidad"].ToString().Replace("'", "''")
+            , json["valor_unitario"].ToString().Replace("'", "''")
              , id);
 
             //Contestamos con el id del nuevo registro.
@@ -106,7 +101,7 @@ namespace api.Controllers
         public string PostDelete(int id)
         {
             //Actualizamos los datos con un update query. 
-            string update_query = string.Format("UPDATE `lu_clientes` " +
+            string update_query = string.Format("UPDATE `lu_productos` " +
              "set " +
             "estado = '0' " +
             "where id='{0}'; "
@@ -133,29 +128,19 @@ namespace api.Controllers
                 JObject json = JObject.Parse(value.ToString());
 
                 //Actualizamos los datos con un update query. 
-                string insert_query = string.Format("INSERT INTO `lu_clientes` " +
-                "(razon_social "  +
-                ", RFC "  +
-                ", id_pais "  +
-                ", codigo_postal "  +
-                ", id_estado "  +
-                ", municipio "  +
-                ", localidad "  +
-                ", colonia "  +
-                ", calle "  +
-                ", numero_exterior) "  +                   
+                string insert_query = string.Format("INSERT INTO `lu_productos` " +
+                "(`nombre`," +
+                "`id_unidad`, " +
+                "`clave_de_producto`, " +
+                "`valor_unitario`, " + 
+                    "`numero_de_identificacion`) " +
                 "VALUES " +
-                "('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}');"
-                    , json["razon_social"].ToString().Replace("'", "''")
-                    , json["RFC"].ToString().Replace("'", "''")
-                    , json["id_pais"].ToString().Replace("'", "''")
-                    , json["codigo_postal"].ToString().Replace("'", "''")
-                    , json["id_estado"].ToString().Replace("'", "''")
-                    , json["municipio"].ToString().Replace("'", "''")
-                    , json["localidad"].ToString().Replace("'", "''")
-                    , json["colonia"].ToString().Replace("'", "''")
-                    , json["calle"].ToString().Replace("'", "''")
-                    , json["numero_exterior"].ToString().Replace("'", "''"));
+                "('{0}', '{1}', '{2}', '{3}', '{4}');"
+                    , json["nombre"].ToString().Replace("'", "''")
+                    , json["id_unidad"].ToString().Replace("'", "''")
+                    , json["clave_de_producto"].ToString().Replace("'", "''")
+                    , json["valor_unitario"].ToString().Replace("'", "''")
+                    , json["numero_de_identificacion"].ToString().Replace("'", "''"));
 
                 //En caso de error, devolverá incorrecto
                 tabla_resultado.Rows[0]["id"] = Database.runInsert(insert_query).ToString();
@@ -188,18 +173,16 @@ namespace api.Controllers
             //Utilizaré la variable estatica (global) de la clase de utilidades y el número de la página que me solicitan. 
             string query = string.Format("select " +
             "a.id " +
-            ", a.razon_social " +
-            ", a.RFC " +
-            ", a.id_pais " +
-            ", a.codigo_postal " +
-            ", a.id_estado " +
-            ", a.municipio " +
-            ", a.localidad " +
-            ", a.colonia " +
-            ", a.calle " +
-            ", a.numero_exterior " +
+            ", a.nombre " +
+            ", a.id_unidad " +
             ", a.foto_url " +
-            "from lu_clientes a " +            
+            ", a.numero_de_identificacion " +
+            ", a.clave_de_producto  " +
+            ", a.valor_unitario  " +
+            ", concat('$', a.valor_unitario) as valor_unitario_custom  " +
+            ", b.nombre as unidad " +
+            "from lu_productos a " +
+            "LEFT JOIN lu_unidades b on a.id_unidad=b.id " +             
             "where a.id='{0}' "
                 , id);
 
@@ -218,14 +201,14 @@ namespace api.Controllers
                 JObject json = JObject.Parse(value.ToString());
 
                 string filename = string.Format("{0}.jpg", id);
-                utilidades.guardar_imagen(json["foto_url"].ToString().Replace("'", "''").ToString(), "clientes", filename);
+                utilidades.guardar_imagen(json["foto_url"].ToString().Replace("'", "''").ToString(), "productos", filename);
 
-                string foto_url = "http://" + Request.Headers.Host + "/temp/clientes/" + filename;
+                string foto_url = "http://" + Request.Headers.Host + "/temp/productos/" + filename;
 
                 foto_url += "?fecha=" + DateTime.Now.ToString("ddMMyyyy_HHmmss");
 
                 //Actualizamos el campo de foto_url de la mascota.             
-                string update_query = string.Format("UPDATE `lu_clientes` " +
+                string update_query = string.Format("UPDATE `lu_productos` " +
                "set " +
                "foto_url='{0}' " +
                "where id='{1}'"

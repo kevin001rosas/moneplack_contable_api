@@ -37,8 +37,10 @@ namespace api
             //HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Pragma, Cache-Control, Authorization ");            
             HttpContext.Current.Response.AddHeader("Access-Control-Request-Headers", "*");
 
+            HttpContext.Current.Response.AddHeader("Access-Control-Expose-Headers", "Content-Disposition");
+
             //Aquíse ponen los headers que se admiten para el envío a través de las solicitudes AJAX. 
-            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Pragma, Cache-Control, Authorization, id_tipo_de_usuario, id_usuario, token, pagina, nombre, modo, secret, nombre_de_usuario");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Pragma, Cache-Control, Authorization, id_tipo_de_usuario, id_usuario, token, pagina, nombre, modo, secret, nombre_de_usuario, mes, fecha_inicial, fecha_final, id_cliente");
 
 
             if (HttpContext.Current.Request.HttpMethod == "OPTIONS")
